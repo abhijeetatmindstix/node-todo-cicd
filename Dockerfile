@@ -3,5 +3,6 @@ WORKDIR app
 COPY . .
 RUN npm install
 RUN npm run test
+RUN npm audit fix
 EXPOSE 8000
 CMD ["node","app.js"]
