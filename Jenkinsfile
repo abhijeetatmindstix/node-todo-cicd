@@ -25,5 +25,10 @@ pipeline {
                 sh "docker-compose down && docker-compose up -d"
             }
         }
+        stage('Congratulations'){
+            steps{
+                echo "Application is Running"
+            }
+        }        
     }
 }
