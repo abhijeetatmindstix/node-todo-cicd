@@ -14,11 +14,11 @@ pipeline {
             }
         }
         
-        stage('container-creation'){
-            steps{
-                sh 'docker run -d --name node-app-container -p 8000:8000 node-app-todo'
-            }
-        }
+//         stage('container-creation'){
+//             steps{
+//                 sh 'docker run -d --name node-app-container -p 8000:8000 node-app-todo'
+//             }
+//         }
         
         stage('Push'){
             steps{
