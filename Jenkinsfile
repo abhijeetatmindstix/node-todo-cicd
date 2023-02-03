@@ -13,6 +13,13 @@ pipeline {
                 sh 'docker build . -t trainwithshubham/node-todo-test:latest'
             }
         }
+        
+        stage('container-creation'){
+            steps{
+                sh 'docker run -d --name node-app-container -p 8000:8000 node-app-todo'
+            }
+        }
+        
         stage('Push'){
             steps{
                 withCredentials([usernamePassword(credentialsId: 'dockerHub', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
