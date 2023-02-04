@@ -1,31 +1,22 @@
 pipeline {
     agent any
     environment {
-        AWS_ACCOUNT_ID="675391935708"
-        AWS_REGION = "ap-south-1"
-        REPO_NAME="aquila"
-        REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${REPO_NAME}"
+        registry = "675391935708.dkr.ecr.ap-south-1.amazonaws.com/aquila"
     }
    
     stages {
-         // Downloading the source file and logging into ECR
-         stage('Logging into AWS ECR') {
+        stage('Cloning Git') {
             steps {
-                script {
-                
-                sh 'https://github.com/abhijeetatmindstix/node-todo-cicd.git'
-                sh "aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
-                }
-                 
+                checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: '', url: 'https://github.com/abhijeetatmindstix/node-todo-cicd.git']]])     
             }
         }
-        
   
     // Building Docker images
     stage('Building image') {
       steps{
-            sh 'docker build . -t node-app-todo'
-            sh "docker tag aquila-image:latest ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${REPO_NAME}:latest"
+        script {
+          dockerImage = docker.build registry
+        }
       }
     }
    
@@ -33,9 +24,26 @@ pipeline {
     stage('Pushing to ECR') {
      steps{  
          script {
-                sh "docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${REPO_NAME}:latest"
+                sh 'aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 675391935708.dkr.ecr.ap-south-1.amazonaws.com'
+                sh 'docker push 675391935708.dkr.ecr.ap-south-1.amazonaws.com/aquila:latest'
          }
         }
       }
+   
+         // Stopping Docker containers for cleaner Docker run
+     stage('stop previous containers') {
+         steps {
+            sh 'docker ps -f name=mypythonContainer -q | xargs --no-run-if-empty docker container stop'
+            sh 'docker container ls -a -fname=mypythonContainer -q | xargs -r docker container rm'
+         }
+       }
+      
+    stage('Docker Run') {
+     steps{
+         script {
+                sh 'docker run -d -p 8096:8000 --rm --name mypythonContainer 675391935708.dkr.ecr.ap-south-1.amazonaws.com/aquila:latest'
+            }
+      }
+    }
     }
 }
