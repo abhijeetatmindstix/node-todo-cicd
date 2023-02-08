@@ -20,15 +20,15 @@ pipeline {
       }
     }
    
-    // Uploading Docker images into AWS ECR
-    stage('Pushing to ECR') {
-     steps{  
-         script {
-                sh 'aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 675391935708.dkr.ecr.ap-south-1.amazonaws.com'
-                sh 'docker push 675391935708.dkr.ecr.ap-south-1.amazonaws.com/aquila:latest'
-         }
-        }
-      }
+//     // Uploading Docker images into AWS ECR
+//     stage('Pushing to ECR') {
+//      steps{  
+//          script {
+//                 sh 'aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 675391935708.dkr.ecr.ap-south-1.amazonaws.com'
+//                 sh 'docker push 675391935708.dkr.ecr.ap-south-1.amazonaws.com/aquila:latest'
+//          }
+//         }
+//       }
    
          // Stopping Docker containers for cleaner Docker run
      stage('stop previous containers') {
