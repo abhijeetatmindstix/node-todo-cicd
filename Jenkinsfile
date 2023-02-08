@@ -15,17 +15,17 @@ pipeline {
       when {
         branch "PR-${pr.number}"
       }
-      script {
-        def inProgressBuilds = sh(script: "jenkins-cli list-jobs | grep 'PR-' | awk '{print \\$1}'", returnStdout: true).trim().split('\n')
-        inProgressBuilds.each { build ->
-          def buildNumber = build.split('-')[-1]
-          if (buildNumber < env.BUILD_NUMBER) {
-            sh "jenkins-cli cancel-job ${build}"
-            echo "Cancelled build #${buildNumber}"
-          }
-        }
-      }
-    }
+//       script {
+//         def inProgressBuilds = sh(script: "jenkins-cli list-jobs | grep 'PR-' | awk '{print \\$1}'", returnStdout: true).trim().split('\n')
+//         inProgressBuilds.each { build ->
+//           def buildNumber = build.split('-')[-1]
+//           if (buildNumber < env.BUILD_NUMBER) {
+//             sh "jenkins-cli cancel-job ${build}"
+//             echo "Cancelled build #${buildNumber}"
+//           }
+//         }
+//       }
+//     }
 
         
   
