@@ -10,6 +10,23 @@ pipeline {
                 checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: '', url: 'https://github.com/abhijeetatmindstix/node-todo-cicd.git']]])     
             }
         }
+
+    stage('Cancel In-Progress Builds') {
+     when {
+       branch "PR-${pr.number}"
+     }
+     script {
+       def inProgressBuilds = sh(script: "jenkins-cli list-jobs | grep 'PR-' | awk '{print $1}'", returnStdout: true).trim().split('\n')
+       inProgressBuilds.each { build ->
+         def buildNumber = build.split('-')[-1]
+         if (buildNumber < env.BUILD_NUMBER) {
+           sh "jenkins-cli cancel-job ${build}"
+           echo "Cancelled build #${buildNumber}"
+         }
+       }
+     }
+    }
+        
   
     // Building Docker images
     stage('Building image') {
