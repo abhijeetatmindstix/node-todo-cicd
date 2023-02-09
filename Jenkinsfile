@@ -17,7 +17,7 @@ def cancelPreviousBuilds() {
         }
     }
 }
-}
+
 
 
 
