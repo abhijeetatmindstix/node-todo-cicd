@@ -5,6 +5,7 @@ def cancelPreviousBuilds() {
     def branchName = "docker-pipeline"
 
     /* Get job name */
+    log.info("cancelPreviousBuilds: ${buildNumber}")
     def currentJob = Jenkins.instance.getItemByFullName(jobName)
 
     /* Iterating over the builds for specific job */
