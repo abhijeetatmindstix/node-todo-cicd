@@ -18,7 +18,12 @@ def cancelPreviousBuilds() {
     }
 }
 
-
+// this is scripted pipeline
+node('built-in') { // use whatever node name or label you want
+    stage('Cancel older builds') {
+        cancelPreviousBuilds()
+    }
+}
 
 
 
